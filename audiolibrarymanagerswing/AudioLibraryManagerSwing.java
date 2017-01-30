@@ -166,6 +166,24 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
       Object obj = event.getNewLeadSelectionPath().getLastPathComponent();
                    
        textInfo.setText(obj.toString());
+       if (obj.toString().endsWith(".mp3")){
+           
+           InfoCommandSwing inf = new InfoCommandSwing();
+           
+             //getting current selection
+             TreePath selPath = myAudioTree.getPathForLocation(mX, mY);
+             
+             myAudioTree.setSelectionPath(selPath);
+             Object [] arrayPath = selPath.getPath();
+            String file = arrayPath[arrayPath.length-1].toString();
+           
+            try {           
+                textInfo.setText(inf.runCommand(null,file));
+            } catch (CommandException e){
+                JOptionPane.showMessageDialog(myAudioTree, e.getMessage());   
+            }
+           
+       }
        //Displaying 
       // JOptionPane opPane = new JOptionPane();
       // JOptionPane.showMessageDialog(this, "clicked");
@@ -262,16 +280,23 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
                 try{
                     FavCommandSwing myFav = new FavCommandSwing();
                     myFav.runCommand(null, file);
+                    
                     audioTreeModel.addFavoriteModel(file);
+                    
+                    DefaultTreeModel model = (DefaultTreeModel) myAudioTree.getModel();
+                    model.reload();
                 
                 } catch (CommandException e2){
                     JOptionPane.showMessageDialog(myAudioTree, e2.getMessage());
                 }
-            } else   
-                
-             
+            } else   //search the web
             if (e.getActionCommand().contains("web")){
-                
+                SearchWebCommand sw = new SearchWebCommand();
+               try {
+                     sw.runCommand(null, file);
+               } catch (Exception esw){
+                  JOptionPane.showMessageDialog(myAudioTree, esw.getMessage()); 
+               }
             }
             
             
