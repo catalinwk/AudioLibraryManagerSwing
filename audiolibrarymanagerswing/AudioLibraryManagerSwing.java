@@ -6,12 +6,14 @@ package audiolibrarymanagerswing;
 
 import java.awt.event.*;
 import java.awt.*;
+import java.io.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
        
-import  audiolibrarymanagerswing.model.*;
+import audiolibrarymanagerswing.model.*;
+import audioLibraryManager.commands.*;
 
 /**
  * This class instantiates the JavaSwingGui of the AudioLibraryManager
@@ -34,7 +36,7 @@ public class AudioLibraryManagerSwing {
  * This class creates the GUI for the AudioLibrayManager
  * @author Catalin Mazilu
  */
-class MyFrame extends JFrame implements ActionListener, TreeSelectionListener {
+class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, MouseListener {
     /**
      * Defining of graphical objects
      */
@@ -69,6 +71,17 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener {
      */
       JTextArea textInfo;
     
+      /**
+       * My Tree Pop up Menu
+     */
+      JPopupMenu myPopup;
+      
+      /**
+       * Mouse coordinates, used on popup menu
+       */
+      int mX;
+      int mY;
+      
     /**
      * Constructor - creates the GUI Components
      * @param title - String, name of the Windows
@@ -102,28 +115,44 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener {
         
         audioTreeModel = new AudioTreeModel("c:\\cantari\\mp3");
         
-        JTree myAudioTree = new JTree(audioTreeModel.getTreeModel());
+        myAudioTree = new JTree(audioTreeModel.getTreeModel());
         leftPanel.add(myAudioTree);
+        
+        //creating Popup menu
+           
+           myPopup = new JPopupMenu();
+           PopupActionListener pAL = new PopupActionListener();
+           
+           JMenuItem mPlay = new JMenuItem("Play");
+           mPlay.addActionListener(pAL);
+           myPopup.add(mPlay);
+
+           JMenuItem mSearchWeb = new JMenuItem("Search on the web");
+           mSearchWeb.addActionListener(pAL);
+           myPopup.add(mSearchWeb);
+           
+           JMenuItem mFav = new JMenuItem("Add to favorites");
+           mFav.addActionListener(pAL);
+           myPopup.add(mFav);
+    
         
         //Creating JSlipPanel
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
         getContentPane().add(splitPane,BorderLayout.CENTER);
         
-        
         //adding listener
         myAudioTree.addTreeSelectionListener(this);
-        
+        myAudioTree.addMouseListener(this);
         pack();
         
     }
     
     public void actionPerformed(ActionEvent e){
-        System.out.println("Click");
-        //if (e.getSource().getClass().toString()== "Jtree")
+        
+        
           JOptionPane op = new JOptionPane();
-         
-             this.getContentPane().add(op);
-          JOptionPane.showMessageDialog(this, "clicked");
+          this.getContentPane().add(op);
+          JOptionPane.showMessageDialog(myAudioTree, "clicked");
     }
     
     /**
@@ -134,10 +163,113 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener {
       Object obj = event.getNewLeadSelectionPath().getLastPathComponent();
                    
        textInfo.setText(obj.toString());
-       //Displaying dialog
-       JOptionPane opPane = new JOptionPane();
-       JOptionPane.showMessageDialog(this, "clicked");
+       //Displaying 
+      // JOptionPane opPane = new JOptionPane();
+      // JOptionPane.showMessageDialog(this, "clicked");
     }
+    
+    public void mouseExited(MouseEvent e){
+        
+    }
+    
+    public void mouseEntered(MouseEvent e){
+        
+    }
+    
+    public void mouseReleased(MouseEvent e){
+         mX = e.getX();
+         mY = e.getY();
+         
+         if (e.isPopupTrigger ()){
+                myPopup.show(myAudioTree , e.getX () , e.getY ());
+            }   
+    }
+
+    public void mousePressed(MouseEvent e){
+        //TreePath selPath = myAudioTree.getPathForLocation(e.getX(), e.getY());
+        //int selRow = myAudioTree.getRowForLocation(e.getX(), e.getY()); 
+         mX = e.getX();
+         mY = e.getY();
+                
+         if (e.isPopupTrigger ()){
+                            
+                myPopup.show(myAudioTree , e.getX () , e.getY ());
+            } else
+         {
+            // myPopup.setVisible(false);
+         }
+         
+        /*
+          if (e.getButton()>1){
+           String label = "popup: ";
+           JPopupMenu popup = new JPopupMenu();
+           popup.add(new JMenuItem(label));
+           int x = e.getX();
+           int y = e.getY();
+           myAudioTree.add(popup);
+           popup.show(myAudioTree, x, y);
+          }
+        */
+    }
+    
+    public void mouseClicked (MouseEvent e){
+        
+    }
+    
+    /**
+     * This class creates a ActionListener for pop up menu
+     */
+    class PopupActionListener implements ActionListener {
+         public void actionPerformed(ActionEvent e) {
+            //getting current selection
+             TreePath selPath = myAudioTree.getPathForLocation(mX, mY);
+             
+             myAudioTree.setSelectionPath(selPath);
+              Object [] arrayPath = selPath.getPath();
+           String file = arrayPath[arrayPath.length-1].toString();
+             
+            //System.out.println("Selected: " + actionEvent.getActionCommand());
+            JOptionPane opPane = new JOptionPane();
+            if (!file.endsWith(".mp3"))
+            {
+                JOptionPane.showMessageDialog(myAudioTree, " This in not a file: "+ file);
+                return ;
+            } 
+            
+            JOptionPane.showMessageDialog(myAudioTree, e.getActionCommand()+" "+ file);
+          
+            //JOptionPane.showMessageDialog(myAudioTree, e.getActionCommand());
+            
+            //Play command
+            if (e.getActionCommand().contains("Play")) {
+                
+                
+                try{
+                PlayCommandSwing myPlay = new PlayCommandSwing();
+                myPlay.runCommand(null, file);
+                
+                } catch (CommandException e2){
+                    JOptionPane.showMessageDialog(myAudioTree, e2.getMessage());
+                }
+             
+                
+                
+            } else
+            if (e.getActionCommand().contains("favorite")){
+                
+            } else 
+            if (e.getActionCommand().contains("web")){
+                
+            }
+            
+            
+            
+            
+            
+         }
+    }
+
+    
     
     
 }

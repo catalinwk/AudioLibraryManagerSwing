@@ -15,7 +15,7 @@ import java.awt.Desktop;
  * Used to play an audio file
  * @author Catalin Mazilu
  */
-public class PlayCommand 
+public class PlayCommandSwing 
 implements AudioCommand
 {
     
@@ -36,18 +36,11 @@ implements AudioCommand
      * @param args - command arguments... play file.mp3
      * @throws CommandException d
      */
-    public void runCommand(ShellPath path, String args)
+    public void runCommand(ShellPath path, String filePath)
     throws CommandException
     {
-            StringTokenizer commandToken = new StringTokenizer(args);
-        
-            if (commandToken.countTokens()>2)
-                throw(new CommandException("Invalid number of arguments"));
             
-            commandToken.nextToken();
-
-            String newpath = commandToken.nextToken().toString();
-            File f = new File(new File(newpath).getAbsolutePath());
+            File f = new File(new File(filePath).getAbsolutePath());
     
             if (f.exists()) {
                 /*
