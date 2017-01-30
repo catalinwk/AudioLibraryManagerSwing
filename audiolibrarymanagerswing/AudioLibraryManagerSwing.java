@@ -112,9 +112,12 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
         rightPanel.add(textInfo);
         //rightPanel.setSize(1200, 800);
         
-        
-        audioTreeModel = new AudioTreeModel("c:\\cantari\\mp3");
-        
+        try {
+             audioTreeModel = new AudioTreeModel("c:\\cantari\\mp3");
+        } catch (CommandException efav){
+             JOptionPane opPane = new JOptionPane();
+             JOptionPane.showMessageDialog(myAudioTree, " This in not a file: "+ efav.getMessage());
+        }
         myAudioTree = new JTree(audioTreeModel.getTreeModel());
         leftPanel.add(myAudioTree);
         
@@ -256,8 +259,17 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
                 
             } else
             if (e.getActionCommand().contains("favorite")){
+                try{
+                    FavCommandSwing myFav = new FavCommandSwing();
+                    myFav.runCommand(null, file);
+                    audioTreeModel.addFavoriteModel(file);
                 
-            } else 
+                } catch (CommandException e2){
+                    JOptionPane.showMessageDialog(myAudioTree, e2.getMessage());
+                }
+            } else   
+                
+             
             if (e.getActionCommand().contains("web")){
                 
             }
