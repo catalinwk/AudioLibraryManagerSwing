@@ -22,6 +22,11 @@ public class AudioTreeModel {
         root = new DefaultMutableTreeNode("root", true);
         this.path = path;
         
+        //adding favorites list
+        root.add(new DefaultMutableTreeNode("FAVORITES"));
+       
+        
+        
         getFileList(root,new File(path));
     }
     
