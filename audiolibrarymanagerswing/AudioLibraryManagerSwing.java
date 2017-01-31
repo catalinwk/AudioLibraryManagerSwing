@@ -82,6 +82,11 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
       int mX;
       int mY;
       
+      /**
+       * Displaying MP3 Info
+       */
+      JTable myTable;
+      
     /**
      * Constructor - creates the GUI Components
      * @param title - String, name of the Windows
@@ -111,6 +116,8 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
         rightPanel.add(rightSideTitle);
         rightPanel.add(textInfo);
         //rightPanel.setSize(1200, 800);
+
+      
         
         try {
              audioTreeModel = new AudioTreeModel("c:\\cantari\\mp3");
@@ -182,7 +189,18 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
             } catch (CommandException e){
                 JOptionPane.showMessageDialog(myAudioTree, e.getMessage());   
             }
+       //I am dealing with a directory
+       } else {
            
+             //creating the table for MP3 info
+        myTable = new JTable(new AudioInfoTableModel(obj.toString()));
+        
+        rightPanel.add(myTable);
+        myTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        myTable.setFillsViewportHeight(true);
+        
+        //myTable.setModel();
+           myTable.setVisible(true);
        }
        //Displaying 
       // JOptionPane opPane = new JOptionPane();
