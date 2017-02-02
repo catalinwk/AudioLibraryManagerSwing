@@ -111,6 +111,11 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
         
         //creating text area for displaying info
          textInfo = new JTextArea();
+         
+        myTable = new JTable();
+        rightPanel.add(myTable);
+        myTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        myTable.setFillsViewportHeight(true);
         
         
         rightPanel.add(rightSideTitle);
@@ -189,15 +194,17 @@ class MyFrame extends JFrame implements ActionListener, TreeSelectionListener, M
             } catch (CommandException e){
                 JOptionPane.showMessageDialog(myAudioTree, e.getMessage());   
             }
-       //I am dealing with a directory
-       } else {
+       //I am dealing with FAVORITES
+       } else if (obj.toString().contains("FAVORITES")) {
+            //TODO code for REPORT
+           
+       //I am dealing with a direcotory
+       } else  {
            
              //creating the table for MP3 info
-        myTable = new JTable(new AudioInfoTableModel(obj.toString()));
         
-        rightPanel.add(myTable);
-        myTable.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        myTable.setFillsViewportHeight(true);
+        myTable.setModel(new AudioInfoTableModel(obj.toString()));
+        
         
         //myTable.setModel();
            myTable.setVisible(true);

@@ -28,7 +28,7 @@ public class AudioInfoTableModel
 extends AbstractTableModel
 {
      private String[] columnNames = {"File ", "Title","Artist","Composer","Genre","Album"};
-        private Object[][] data = new Object[10][10];
+        private Object[][] data = new Object[10][6];
         //index of object
         private int oIndex=0;
         /**
@@ -77,7 +77,10 @@ extends AbstractTableModel
                    data[oIndex][3] = metadata.get("xmpDM:composer");      
                    data[oIndex][4] = metadata.get("xmpDM:genre");
                    data[oIndex][5] = metadata.get("xmpDM:album");
-
+                              
+                   
+                   oIndex++;
+                   
                     } catch (FileNotFoundException e) {
                     e.printStackTrace();
                     } catch (IOException e) {
