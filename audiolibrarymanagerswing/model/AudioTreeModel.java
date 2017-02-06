@@ -9,11 +9,21 @@ import audioLibraryManager.commands.*;
 
 import java.io.*;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import java.io.File;
+
 
 
 /**
  * This class creates a model for Audio Files JTree
  * @author Catalin Mazilu
+ * made with this tutorial
+ * http://www.mkyong.com/java/how-to-read-xml-file-in-java-dom-parser/
  */
 public class AudioTreeModel {
     public DefaultMutableTreeNode root;
@@ -22,7 +32,7 @@ public class AudioTreeModel {
     /**
      * default favorite file
      */
-    public String favoritePath = "favorite.txt";
+    public String favoritePath = "favorite.xml";
     /**
      * default favorite node
      */
@@ -86,12 +96,16 @@ public class AudioTreeModel {
      */
     public void loadFavorites(String filePath, DefaultMutableTreeNode node) throws CommandException {
         
+        
+        /**
+         * OLd code, replaced with XML parsing
+         */
+        /*
         File f = new File(new File(filePath).getAbsolutePath());
     
             if (f.exists()) {
-                /*
-                 * add the file to favorite file
-                 */
+               
+                 //add the file to favorite file
                 
                 try (BufferedReader favfile = new BufferedReader(new FileReader(filePath))) {
                    
@@ -114,6 +128,45 @@ public class AudioTreeModel {
                 throw(new CommandException("Incorect path"));
 
             }
+        
+        */
+         
+        
+        try {
+
+	File fXmlFile = new File(filePath);
+	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+	Document doc = dBuilder.parse(fXmlFile);
+
+	//optional, but recommended
+	//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+	doc.getDocumentElement().normalize();
+
+	//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+
+	NodeList nList = doc.getElementsByTagName("file");
+
+	//System.out.println("----------------------------");
+
+	for (int temp = 0; temp < nList.getLength(); temp++) {
+		Node nNode = nList.item(temp);
+                nNode.getAttributes();
+
+                String file_name =  nNode.getTextContent();
+                DefaultMutableTreeNode child = new DefaultMutableTreeNode(file_name);
+                node.add(child);  
+
+	}
+        
+    } catch (Exception e) {
+	throw(new CommandException(e.getMessage()));
+    }
+        
+        
+        
+        
+        
         
         
     }
